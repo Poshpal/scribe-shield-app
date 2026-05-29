@@ -34,6 +34,16 @@ function DocumentDetail() {
     },
   });
 
+  const { data: creator } = useQuery({
+    queryKey: ["doc-creator", data?.created_by],
+    enabled: !!data?.created_by,
+    queryFn: async () => {
+      const { data: rows, error } = await supabase.rpc("get_user_display", { _user_id: data!.created_by });
+      if (error) throw error;
+      return Array.isArray(rows) ? rows[0] : rows;
+    },
+  });
+
   const [editing, setEditing] = useState(false);
   const [subject, setSubject] = useState("");
   const [recipient, setRecipient] = useState("");
