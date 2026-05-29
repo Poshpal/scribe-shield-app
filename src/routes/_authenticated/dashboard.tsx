@@ -28,8 +28,8 @@ function Dashboard() {
   const { data: anyAdmin } = useQuery({
     queryKey: ["any-admin"],
     queryFn: async () => {
-      const { count } = await supabase.from("user_roles").select("id", { count: "exact", head: true }).eq("role", "admin");
-      return (count ?? 0) > 0;
+      const { data } = await supabase.rpc("admin_exists");
+      return !!data;
     },
   });
 
