@@ -34,6 +34,16 @@ function DocumentDetail() {
     },
   });
 
+  const { data: creator } = useQuery({
+    queryKey: ["doc-creator", data?.created_by],
+    enabled: !!data?.created_by,
+    queryFn: async () => {
+      const { data: rows, error } = await supabase.rpc("get_user_display", { _user_id: data!.created_by });
+      if (error) throw error;
+      return Array.isArray(rows) ? rows[0] : rows;
+    },
+  });
+
   const [editing, setEditing] = useState(false);
   const [subject, setSubject] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -150,6 +160,14 @@ function DocumentDetail() {
         </Field>
         <Field label="Notas">
           {editing ? <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={1000} /> : <p className="whitespace-pre-wrap">{data.notes || "—"}</p>}
+        </Field>
+        <Field label="Creado por">
+          <p>
+            {(creator as any)?.full_name || (creator as any)?.email || "—"}
+            {(creator as any)?.email && (creator as any)?.full_name && (
+              <span className="ml-2 text-xs text-muted-foreground">{(creator as any).email}</span>
+            )}
+          </p>
         </Field>
 
         {editing && (
