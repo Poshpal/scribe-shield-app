@@ -94,9 +94,18 @@ function NewDocument() {
             <Select value={typeId} onValueChange={setTypeId}>
               <SelectTrigger><SelectValue placeholder="Selecciona tipo" /></SelectTrigger>
               <SelectContent>
-                {types?.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                {types
+                  ?.filter((t: any) => !t.restricted_area_id || t.restricted_area_id === areaId)
+                  .map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
               </SelectContent>
             </Select>
+            {(() => {
+              const t: any = types?.find((x) => x.id === typeId);
+              if (t?.restricted_area_id && t.restricted_area_id !== areaId) {
+                return <p className="text-xs text-destructive">Este tipo solo puede crearse desde el área autorizada.</p>;
+              }
+              return null;
+            })()}
           </div>
         </div>
 
