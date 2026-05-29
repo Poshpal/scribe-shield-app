@@ -26,7 +26,7 @@ function NewDocument() {
   });
   const { data: types } = useQuery({
     queryKey: ["types"],
-    queryFn: async () => (await supabase.from("document_types").select("id, name, prefix").order("name")).data ?? [],
+    queryFn: async () => (await supabase.from("document_types").select("id, name, prefix, restricted_area_id").order("name")).data ?? [],
   });
 
   const [areaId, setAreaId] = useState<string>("");
