@@ -161,6 +161,14 @@ function DocumentDetail() {
         <Field label="Notas">
           {editing ? <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={1000} /> : <p className="whitespace-pre-wrap">{data.notes || "—"}</p>}
         </Field>
+        <Field label="Creado por">
+          <p>
+            {(creator as any)?.full_name || (creator as any)?.email || "—"}
+            {(creator as any)?.email && (creator as any)?.full_name && (
+              <span className="ml-2 text-xs text-muted-foreground">{(creator as any).email}</span>
+            )}
+          </p>
+        </Field>
 
         {editing && (
           <div className="flex justify-end gap-2 pt-2">
