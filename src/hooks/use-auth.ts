@@ -26,16 +26,21 @@ export function useAuth() {
       setState((s) => ({ ...s, roles: [], profile: null, loading: false }));
       return;
     }
-    const [{ data: rolesData }, { data: profileData }] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", user.id),
-      supabase.from("profiles").select("id, full_name, email, area_id").eq("id", user.id).maybeSingle(),
-    ]);
-    setState((s) => ({
-      ...s,
-      roles: (rolesData ?? []).map((r) => r.role as AppRole),
-      profile: profileData ?? null,
-      loading: false,
-    }));
+    try {
+      const [rolesRes, profileRes] = await Promise.all([
+        supabase.from("user_roles").select("role").eq("user_id", user.id),
+        supabase.from("profiles").select("id, full_name, email, area_id").eq("id", user.id).maybeSingle(),
+      ]);
+      setState((s) => ({
+        ...s,
+        roles: (rolesRes.data ?? []).map((r) => r.role as AppRole),
+        profile: profileRes.data ?? null,
+        loading: false,
+      }));
+    } catch (err) {
+      console.error("loadExtras failed", err);
+      setState((s) => ({ ...s, loading: false }));
+    }
   }, []);
 
   useEffect(() => {
