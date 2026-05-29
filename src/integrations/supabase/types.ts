@@ -42,6 +42,7 @@ export type Database = {
           id: string
           name: string
           prefix: string
+          restricted_area_id: string | null
         }
         Insert: {
           code: string
@@ -49,6 +50,7 @@ export type Database = {
           id?: string
           name: string
           prefix: string
+          restricted_area_id?: string | null
         }
         Update: {
           code?: string
@@ -56,8 +58,17 @@ export type Database = {
           id?: string
           name?: string
           prefix?: string
+          restricted_area_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "document_types_restricted_area_id_fkey"
+            columns: ["restricted_area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documents: {
         Row: {
@@ -222,11 +233,22 @@ export type Database = {
         Returns: boolean
       }
       claim_admin: { Args: never; Returns: undefined }
+      get_user_display: {
+        Args: { _user_id: string }
+        Returns: {
+          email: string
+          full_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      type_allowed_in_area: {
+        Args: { _area_id: string; _type_id: string }
         Returns: boolean
       }
     }
