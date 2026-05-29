@@ -34,7 +34,7 @@ function Dashboard() {
   });
 
   async function claimAdmin() {
-    const { error } = await supabase.from("user_roles").insert({ user_id: user!.id, role: "admin" });
+    const { error } = await supabase.rpc("claim_admin");
     if (error) { toast.error(error.message); return; }
     toast.success("Eres administrador.");
     await refresh();
